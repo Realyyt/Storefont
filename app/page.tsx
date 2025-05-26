@@ -5,7 +5,7 @@ import { ImageGallery } from "@/components/ImageGallery";
 import { AnimatedText } from "@/components/AnimatedText";
 import { galleryImages } from "@/data/gallery";
 import { useRouter } from "next/navigation";
-
+//comment
 export default function Home() {
   const router = useRouter();
 
