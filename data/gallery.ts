@@ -1,6 +1,6 @@
 export const galleryImages = [
   {
-    src: "https://images.pexels.com/photos/17972758/pexels-photo-17972758/free-photo-of-mountains-in-the-distance-behind-lake.jpeg",
+    src: "https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg",
     alt: "Premium Mountain View Canvas Print",
     width: 900,
     height: 1100,
