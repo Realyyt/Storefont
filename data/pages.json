@@ -1,0 +1,23 @@
+[
+  {
+    "id": "home",
+    "slug": "",
+    "title": "Home",
+    "content": "Welcome to our website!",
+    "metaDescription": "Welcome to our website - your one-stop destination for all your needs."
+  },
+  {
+    "id": "about",
+    "slug": "about",
+    "title": "About Us",
+    "content": "Learn more about our company and mission.",
+    "metaDescription": "Discover our story, mission, and the team behind our success."
+  },
+  {
+    "id": "contact",
+    "slug": "contact",
+    "title": "Contact",
+    "content": "Get in touch with us.",
+    "metaDescription": "Contact us for any inquiries or support."
+  }
+]
