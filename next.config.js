@@ -7,9 +7,6 @@ const nextConfig = {
     domains: ['localhost'],
     unoptimized: true,
   },
-  experimental: {
-    serverActions: true,
-  },
 };
 
 module.exports = nextConfig;

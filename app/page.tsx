@@ -15,7 +15,6 @@ export default function Home() {
   const targetScrollY = useRef(0);
   const lastScrollY = useRef(0);
   const animationFrameId = useRef<number>();
-  const [viewportHeight, setViewportHeight] = useState(0);
 
   const images = [
     // First wave (0-5) - well spaced positions
@@ -118,34 +117,6 @@ export default function Home() {
       position: "top-[60%] left-[35%]",
       wave: 2,
     },
-    {
-      src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=300&fit=crop",
-      alt: "Aurora",
-      speed: 0.4,
-      position: "top-[150%] right-[30%]",
-      wave: 2,
-    },
-    {
-      src: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=300&fit=crop",
-      alt: "Beach",
-      speed: 0.3,
-      position: "top-[180%] left-[15%]",
-      wave: 2,
-    },
-    {
-      src: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
-      alt: "Canyon",
-      speed: 0.5,
-      position: "top-[210%] right-[45%]",
-      wave: 2,
-    },
-    {
-      src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=300&fit=crop",
-      alt: "Waterfall",
-      speed: 0.4,
-      position: "top-[240%] left-[25%]",
-      wave: 2,
-    },
   ];
 
   const easeInOutCubic = (t: number) => {
@@ -153,6 +124,8 @@ export default function Home() {
   };
 
   const updateAnimations = () => {
+    if (typeof window === 'undefined') return;
+    
     const scrollSmoothness = 0.08;
     targetScrollY.current = window.pageYOffset;
 
@@ -173,26 +146,25 @@ export default function Home() {
   };
 
   const animate = () => {
+    if (typeof window === 'undefined') return;
     updateAnimations();
     animationFrameId.current = requestAnimationFrame(animate);
   };
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     animate();
-    setViewportHeight(window.innerHeight);
-    const handleResize = () => setViewportHeight(window.innerHeight);
-    window.addEventListener('resize', handleResize);
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
-      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   const getImageTransform = (speed: number, wave: number) => {
-    if (viewportHeight === 0) return { transform: 'translate3d(0, 0, 0) scale(1)', filter: 'blur(0px)', opacity: 1 };
+    if (typeof window === 'undefined') return {};
     
+    const viewportHeight = window.innerHeight;
     const totalMovementRange = viewportHeight * 3.0;
     const easedScrollPercent = easeInOutCubic(scrollProgress);
 
