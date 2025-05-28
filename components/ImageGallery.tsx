@@ -41,124 +41,86 @@ export function ImageGallery({
     offset: ["start end", "end start"],
   });
 
-  // Split images into columns
-  const columnsArray = Array.from({ length: columns }, () => [] as GalleryItem[]);
-  
-  images.forEach((image, index) => {
-    columnsArray[index % columns].push(image);
-  });
-
+  // Masonry/column layout: no manual column splitting
   return (
-    <div ref={containerRef} className={cn(
-      "grid grid-cols-3 gap-8 md:gap-12 lg:gap-16 bg-background relative",
-      isCuratedSection && "h-screen",
-      className
-    )}>
-      {columnsArray.map((columnImages, columnIndex) => (
-        <div 
-          key={`column-${columnIndex}`} 
-          className={cn(
-            "flex flex-col gap-12 md:gap-16 lg:gap-20 relative",
-            columnIndex === 0 ? "mt-0" : 
-            columnIndex === 1 ? "mt-12 md:mt-16 lg:mt-20" :
-            "mt-24 md:mt-32 lg:mt-40"
-          )}
-        >
-          {columnIndex === 1 ? (
-            // Middle column with centered text
-            <div className="relative flex-1 min-h-[80vh]">
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ 
-                  opacity: 1, 
-                  y: 0,
-                  transition: {
-                    duration: 0.8,
-                    ease: [0.22, 1, 0.36, 1]
-                  }
-                }}
-                viewport={{ once: true, margin: "-20% 0px" }}
-                className="absolute inset-0 flex items-center justify-center text-center"
+    <div
+      ref={containerRef}
+      className={cn(
+        `columns-1 sm:columns-2 lg:columns-${columns} gap-${gap} bg-background px-4 md:px-6 lg:px-8`,
+        className
+      )}
+    >
+      {images.map((image, idx) => {
+        const imageRef = useRef<HTMLDivElement>(null);
+        const isInView = useInView(imageRef, {
+          margin: "-20% 0px -20% 0px",
+          once: false,
+        });
+        const size = image.size || (
+          idx % 4 === 0 ? 'large' :
+          idx % 3 === 0 ? 'medium' :
+          'small'
+        );
+        return (
+          <div
+            key={idx}
+            className="mb-8 break-inside-avoid"
+          >
+            <ScrollSection
+              reverse={idx % 2 === 0}
+              intensity={image.intensity || 0.12}
+              size={size}
+              isCuratedSection={isCuratedSection}
+            >
+              <div
+                ref={imageRef}
+                className={cn(
+                  "cursor-pointer transition-all duration-300 hover:scale-[1.02] relative group",
+                  size === 'large' ? "max-w-[100%] md:max-w-[95%] lg:max-w-[100%] mx-auto" :
+                  size === 'medium' ? "max-w-[90%] md:max-w-[85%] lg:max-w-[90%] mx-auto" :
+                  "max-w-[80%] md:max-w-[75%] lg:max-w-[80%] mx-auto"
+                )}
+                onClick={() => onImageClick?.(idx)}
               >
-                <h2 className="text-6xl md:text-7xl lg:text-8xl font-bold text-foreground">
-                  Classy
-                </h2>
-              </motion.div>
-            </div>
-          ) : (
-            // Side columns with images
-            columnImages.map((image, imageIndex) => {
-              const globalIndex = columnIndex + (imageIndex * columns);
-              const imageRef = useRef<HTMLDivElement>(null);
-              const isInView = useInView(imageRef, {
-                margin: "-30% 0px -30% 0px",
-                once: false,
-              });
-              
-              const size = image.size || (
-                (columnIndex + imageIndex) % 3 === 0 ? 'large' :
-                (columnIndex + imageIndex) % 3 === 1 ? 'medium' :
-                'small'
-              );
-              
-              return (
-                <ScrollSection 
-                  key={`image-${columnIndex}-${imageIndex}`}
-                  reverse={columnIndex % 2 === 0}
-                  intensity={image.intensity || 0.15 + (columnIndex * 0.03)}
-                  size={size}
-                  isCuratedSection={isCuratedSection}
+                <motion.div
+                  style={{
+                    filter: useTransform(
+                      () => isInView ? "grayscale(0%)" : "grayscale(100%)"
+                    ),
+                  }}
+                  transition={{ duration: 0.5 }}
+                  className="relative"
                 >
-                  <div 
-                    ref={imageRef}
+                  <AnimatedImage
+                    src={image.src}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    delay={image.delay}
                     className={cn(
-                      "cursor-pointer transition-transform hover:scale-[1.02] relative",
-                      size === 'large' ? "max-w-[95%] md:max-w-[90%] lg:max-w-[95%] mx-auto" :
-                      size === 'medium' ? "max-w-[85%] md:max-w-[80%] lg:max-w-[85%] mx-auto" :
-                      "max-w-[75%] md:max-w-[70%] lg:max-w-[75%] mx-auto"
+                      "w-full h-auto shadow-lg rounded-2xl bg-card transition-all duration-500",
+                      size === 'large' ? "aspect-[4/5] md:aspect-[4/5] lg:aspect-[4/5]" :
+                      size === 'medium' ? "aspect-[3/4] md:aspect-[3/4] lg:aspect-[3/4]" :
+                      "aspect-[2/3] md:aspect-[2/3] lg:aspect-[2/3]"
                     )}
-                    onClick={() => onImageClick?.(globalIndex)}
-                  >
-                    <motion.div
-                      style={{
-                        filter: useTransform(
-                          () => isInView ? "grayscale(0%)" : "grayscale(100%)"
-                        ),
-                      }}
-                      transition={{ duration: 0.5 }}
-                      className="relative"
-                    >
-                      <AnimatedImage
-                        src={image.src}
-                        alt={image.alt}
-                        width={image.width}
-                        height={image.height}
-                        delay={image.delay + (columnIndex * 0.1)}
-                        className={cn(
-                          "w-full h-auto shadow-lg rounded-2xl bg-card transition-all duration-500",
-                          size === 'large' ? "aspect-[4/5] md:aspect-[4/5] lg:aspect-[4/5]" :
-                          size === 'medium' ? "aspect-[3/4] md:aspect-[3/4] lg:aspect-[3/4]" :
-                          "aspect-[2/3] md:aspect-[2/3] lg:aspect-[2/3]"
-                        )}
-                        priority={columnIndex === 0 && imageIndex === 0}
-                      />
-                    </motion.div>
-                    <div className="mt-2 sm:mt-4 text-center">
-                      <h3 className="font-semibold text-base sm:text-lg md:text-xl text-foreground">{image.alt}</h3>
-                      {image.price && (
-                        <p className="text-primary font-medium text-sm sm:text-base mt-1">{image.price}</p>
-                      )}
-                      {image.description && (
-                        <p className="text-muted-foreground text-sm mt-1">{image.description}</p>
-                      )}
-                    </div>
-                  </div>
-                </ScrollSection>
-              );
-            })
-          )}
-        </div>
-      ))}
+                    priority={idx === 0}
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 rounded-2xl" />
+                </motion.div>
+                <div className="mt-3 sm:mt-4 text-center transform transition-transform duration-300 group-hover:translate-y-1">
+                  <h3 className="font-semibold text-base sm:text-lg md:text-xl text-foreground">{image.alt}</h3>
+                  {image.price && (
+                    <p className="text-primary font-medium text-sm sm:text-base mt-1">{image.price}</p>
+                  )}
+                  {image.description && (
+                    <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{image.description}</p>
+                  )}
+                </div>
+              </div>
+            </ScrollSection>
+          </div>
+        );
+      })}
     </div>
   );
 }

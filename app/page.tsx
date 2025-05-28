@@ -15,6 +15,7 @@ export default function Home() {
   const targetScrollY = useRef(0);
   const lastScrollY = useRef(0);
   const animationFrameId = useRef<number>();
+  const [viewportHeight, setViewportHeight] = useState(0);
 
   const images = [
     // First wave (0-5) - well spaced positions
@@ -117,6 +118,34 @@ export default function Home() {
       position: "top-[60%] left-[35%]",
       wave: 2,
     },
+    {
+      src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=300&fit=crop",
+      alt: "Aurora",
+      speed: 0.4,
+      position: "top-[150%] right-[30%]",
+      wave: 2,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=300&fit=crop",
+      alt: "Beach",
+      speed: 0.3,
+      position: "top-[180%] left-[15%]",
+      wave: 2,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
+      alt: "Canyon",
+      speed: 0.5,
+      position: "top-[210%] right-[45%]",
+      wave: 2,
+    },
+    {
+      src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=300&fit=crop",
+      alt: "Waterfall",
+      speed: 0.4,
+      position: "top-[240%] left-[25%]",
+      wave: 2,
+    },
   ];
 
   const easeInOutCubic = (t: number) => {
@@ -150,22 +179,27 @@ export default function Home() {
 
   useEffect(() => {
     animate();
+    setViewportHeight(window.innerHeight);
+    const handleResize = () => setViewportHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   const getImageTransform = (speed: number, wave: number) => {
-    const viewportHeight = window.innerHeight;
+    if (viewportHeight === 0) return { transform: 'translate3d(0, 0, 0) scale(1)', filter: 'blur(0px)', opacity: 1 };
+    
     const totalMovementRange = viewportHeight * 3.0;
     const easedScrollPercent = easeInOutCubic(scrollProgress);
 
-    // Different starting positions for each wave
-    let baseOffset = viewportHeight * 1.0;
+    // Different starting positions for each wave - start much closer to viewport
+    let baseOffset = viewportHeight * 0.3; // Much closer to viewport for immediate visibility
     if (wave === 2) {
-      baseOffset = viewportHeight * 2.5;
+      baseOffset = viewportHeight * 1.8; // Reduced gap between waves
     }
 
     const translateY = baseOffset - easedScrollPercent * totalMovementRange * speed;
@@ -173,16 +207,20 @@ export default function Home() {
     const distanceFromCenter = Math.abs(translateY) / (viewportHeight / 2);
     const scale = Math.max(0.8, 1 - distanceFromCenter * 0.1 * scrollProgress);
 
+    // Smooth opacity transition based on scroll progress and position
+    const opacity = Math.max(0, Math.min(1, 1 - (Math.abs(translateY) / (viewportHeight * 2))));
+
     return {
       transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
       filter: `blur(${Math.min(scrollProgress * speed * 0.5, 2)}px)`,
+      opacity: opacity,
     };
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between bg-background">
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 flex flex-col justify-center items-center text-white text-center">
+      <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 flex flex-col justify-start items-center text-white text-center pt-20">
         {/* Background Parallax Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
@@ -204,7 +242,24 @@ export default function Home() {
           />
         </div>
 
-     
+        {/* Welcome Message */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 text-center"
+          style={{
+            transform: `translateY(${scrollProgress * 30}px)`, // Much slower exit speed
+            opacity: Math.max(0, 1 - scrollProgress * 2), // Slower fade out
+          }}
+        >
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
+            Welcome to our Media Gallery
+          </h1>
+          <p className="text-lg md:text-xl text-neutral-300">
+            Explore our curated collection of premium images
+          </p>
+        </motion.div>
 
         {/* Scroll Indicator */}
         <motion.div 
@@ -212,9 +267,13 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
+          style={{
+            transform: `translateX(-50%) translateY(${scrollProgress * 20}px)`, // Slower exit for scroll indicator
+            opacity: Math.max(0, 1 - scrollProgress * 3), // Fade out scroll indicator
+          }}
         >
           <div className="flex flex-col items-center">
-            <p className="text-sm text-neutral-400 mb-2">Welcome to our Media Library</p>
+            <p className="text-sm text-neutral-400 mb-2">Scroll to Explore</p>
             <div className="w-6 h-10 border-2 border-neutral-400 rounded-full flex justify-center p-1">
               <motion.div 
                 className="w-1.5 h-1.5 bg-neutral-400 rounded-full"
@@ -241,56 +300,35 @@ export default function Home() {
         >
           <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950">
          
-
-            {/* Parallax UI and images only after scroll starts */}
-            {scrollProgress > 0 && (
-              <>
-                {/* Title */}
-                <div
-                  className="fixed top-12 left-1/2 text-white text-5xl font-bold text-center z-30 transition-all duration-100 ease-out"
+            {/* Images - Now always visible for smooth transition */}
+            <div className="absolute w-full h-full">
+              {images.map((image, index) => (
+                <Link
+                  key={index}
+                  href={`/image/${image.alt.toLowerCase()}`}
+                  className={`absolute w-64 h-44 rounded-2xl overflow-hidden shadow-2xl transition-transform duration-100 ease-out ${image.position} hover:scale-105 hover:z-50`}
                   style={{
-                    transform: `translate(-50%, ${-easeInOutCubic(scrollProgress) * 200}px)`,
-                    opacity: Math.max(0.1, 1 - scrollProgress * 1.2),
-                    textShadow: "2px 2px 8px rgba(0,0,0,0.8)",
+                    ...getImageTransform(image.speed, image.wave),
+                    willChange: "transform",
+                    boxShadow: "0 15px 40px rgba(0,0,0,0.4)",
                   }}
                 >
-                  Welcome to our Media Library
-                </div>
-                {/* Scroll Direction */}
-                <div className="fixed top-40 left-1/2 transform -translate-x-1/2 text-white/50 text-base z-30 text-center">
-                  {scrollDirection === "down" ? "↓ Scroll Down to Explore" : "↑ Scroll Up to Explore"}
-                </div>
-                {/* Images */}
-                <div className="absolute w-full h-full">
-                  {images.map((image, index) => (
-                    <Link
-                      key={index}
-                      href={`/image/${image.alt.toLowerCase()}`}
-                      className={`absolute w-64 h-44 rounded-2xl overflow-hidden shadow-2xl transition-transform duration-100 ease-out ${image.position} hover:scale-105 hover:z-50`}
-                      style={{
-                        ...getImageTransform(image.speed, image.wave),
-                        willChange: "transform",
-                        boxShadow: "0 15px 40px rgba(0,0,0,0.4)",
-                      }}
-                    >
-                      <Image
-                        src={image.src}
-                        alt={image.alt}
-                        fill
-                        className="object-cover"
-                        crossOrigin="anonymous"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-300 flex items-end">
-                        <div className="p-4 text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
-                          <h3 className="text-lg font-semibold capitalize">{image.alt}</h3>
-                          <p className="text-sm">Click to view details</p>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </>
-            )}
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    className="object-cover"
+                    crossOrigin="anonymous"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-300 flex items-end">
+                    <div className="p-4 text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
+                      <h3 className="text-lg font-semibold capitalize">{image.alt}</h3>
+                      <p className="text-sm">Click to view details</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
