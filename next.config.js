@@ -4,9 +4,15 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['localhost'],
-    unoptimized: true,
+    domains: ['localhost', 'cdn.sanity.io'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
+  trailingSlash: true,
 };
 
 module.exports = nextConfig;
