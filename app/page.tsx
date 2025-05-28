@@ -11,6 +11,8 @@ export default function Home() {
   const router = useRouter();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [scrollDirection, setScrollDirection] = useState("down");
+  const [viewportHeight, setViewportHeight] = useState(800); // Default fallback value
+  const [isClient, setIsClient] = useState(false);
   const currentScrollY = useRef(0);
   const targetScrollY = useRef(0);
   const lastScrollY = useRef(0);
@@ -124,6 +126,8 @@ export default function Home() {
   };
 
   const updateAnimations = () => {
+    if (typeof window === 'undefined') return;
+    
     const scrollSmoothness = 0.08;
     targetScrollY.current = window.pageYOffset;
 
@@ -149,32 +153,49 @@ export default function Home() {
   };
 
   useEffect(() => {
-    animate();
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
+    // Set client-side flag and viewport height
+    setIsClient(true);
+    if (typeof window !== 'undefined') {
+      setViewportHeight(window.innerHeight);
+
+      // Update viewport height on resize
+      const handleResize = () => {
+        setViewportHeight(window.innerHeight);
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      animate();
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
+        }
+      };
+    }
   }, []);
 
   const getImageTransform = (speed: number, wave: number) => {
-    const viewportHeight = window.innerHeight;
-    const totalMovementRange = viewportHeight * 3.0;
+    // Use the state value instead of directly accessing window.innerHeight
+    // But also check if we're on the client side
+    const safeViewportHeight = typeof window !== 'undefined' ? viewportHeight : 800;
+    const totalMovementRange = safeViewportHeight * 3.0;
     const easedScrollPercent = easeInOutCubic(scrollProgress);
 
     // Different starting positions for each wave - start much closer to viewport
-    let baseOffset = viewportHeight * 0.3; // Much closer to viewport for immediate visibility
+    let baseOffset = safeViewportHeight * 0.3; // Much closer to viewport for immediate visibility
     if (wave === 2) {
-      baseOffset = viewportHeight * 1.8; // Reduced gap between waves
+      baseOffset = safeViewportHeight * 1.8; // Reduced gap between waves
     }
 
     const translateY = baseOffset - easedScrollPercent * totalMovementRange * speed;
 
-    const distanceFromCenter = Math.abs(translateY) / (viewportHeight / 2);
+    const distanceFromCenter = Math.abs(translateY) / (safeViewportHeight / 2);
     const scale = Math.max(0.8, 1 - distanceFromCenter * 0.1 * scrollProgress);
 
     // Smooth opacity transition based on scroll progress and position
-    const opacity = Math.max(0, Math.min(1, 1 - (Math.abs(translateY) / (viewportHeight * 2))));
+    const opacity = Math.max(0, Math.min(1, 1 - (Math.abs(translateY) / (safeViewportHeight * 2))));
 
     return {
       transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
@@ -183,6 +204,8 @@ export default function Home() {
     };
   };
 
+  // Don't render the simplified version - always render the full component
+  // but protect window access within functions
   return (
     <main className="flex min-h-screen flex-col items-center justify-between bg-background">
       {/* Hero Section */}
