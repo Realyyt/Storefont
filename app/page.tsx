@@ -124,8 +124,6 @@ export default function Home() {
   };
 
   const updateAnimations = () => {
-    if (typeof window === 'undefined') return;
-    
     const scrollSmoothness = 0.08;
     targetScrollY.current = window.pageYOffset;
 
@@ -146,13 +144,11 @@ export default function Home() {
   };
 
   const animate = () => {
-    if (typeof window === 'undefined') return;
     updateAnimations();
     animationFrameId.current = requestAnimationFrame(animate);
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
     animate();
     return () => {
       if (animationFrameId.current) {
@@ -162,8 +158,6 @@ export default function Home() {
   }, []);
 
   const getImageTransform = (speed: number, wave: number) => {
-    if (typeof window === 'undefined') return {};
-    
     const viewportHeight = window.innerHeight;
     const totalMovementRange = viewportHeight * 3.0;
     const easedScrollPercent = easeInOutCubic(scrollProgress);
@@ -271,7 +265,31 @@ export default function Home() {
           style={{ minHeight: `${images.length * 120}vh` }}
         >
           <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950">
-         
+            {/* Static Icon Notification */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none">
+              <div className="relative">
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-white/10 blur-xl rounded-full animate-pulse" />
+                
+                {/* Icon */}
+                <div className="relative bg-black/30 backdrop-blur-md p-4 rounded-full border border-white/10 shadow-2xl">
+                  <svg 
+                    className="w-6 h-6 text-white animate-bounce" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             {/* Images - Now always visible for smooth transition */}
             <div className="absolute w-full h-full">
               {images.map((image, index) => (
