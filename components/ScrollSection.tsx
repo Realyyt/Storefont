@@ -26,7 +26,7 @@ export function ScrollSection({
   
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end end"],
   });
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function ScrollSection({
         const direction = e.deltaY > 0 ? 1 : -1;
         controls.start({
           y: `${direction * 100}%`,
-          transition: { duration: 0.5, ease: "easeInOut" }
+          transition: { duration: 0.1, ease: "linear" }
         });
       };
 
@@ -69,25 +69,25 @@ export function ScrollSection({
     [0, reverse ? -80 * intensity * speedMultiplier : 80 * intensity * speedMultiplier]
   );
 
-  // Enhanced scale effect for better passing illusion
+  // Optimized scale effect for immediate response
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.7, 1],
-    [0.98, 1.02, 1.02, 0.98]
+    [0, 1],
+    [0.98, 0.98]
   );
 
-  // Enhanced opacity transition for better depth
+  // Optimized opacity transition for immediate response
   const opacity = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0.9, 1, 1, 0.9]
+    [0, 1],
+    [1, 1]
   );
 
   return (
     <motion.section
       ref={ref}
       className={cn(
-        "relative",
+        "relative will-change-scroll",
         size === 'small' ? 'z-50' :
         size === 'medium' ? 'z-40' :
         'z-30',
@@ -102,10 +102,11 @@ export function ScrollSection({
           x: isCuratedSection ? undefined : xValue,
           scale: isCuratedSection ? undefined : scale,
           opacity: isCuratedSection ? undefined : opacity,
-          willChange: 'transform'
+          willChange: 'transform',
+          transform: 'translate3d(0, 0, 0)'
         }}
         className={cn(
-          "w-full h-full transition-all duration-700 ease-out",
+          "w-full h-full",
           isCuratedSection && "flex flex-col items-center justify-center"
         )}
       >
