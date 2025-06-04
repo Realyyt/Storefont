@@ -28,7 +28,7 @@ export function ProductClient({ product }: ProductClientProps) {
           href="/"
           className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
         >
-          ← Back to Gallery
+          ← 
         </Link>
 
         <div className="grid grid-cols-3 gap-16 items-start">

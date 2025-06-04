@@ -149,46 +149,71 @@ export default function ImagePage() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-neutral-900 relative overflow-hidden"
     >
-      {/* Animated background gradient */}
-      <motion.div
-        className="absolute inset-0 opacity-20"
-        animate={{
-          background: [
-            'radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-            'radial-gradient(circle at 100% 100%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-            'radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-          ],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-      />
+      {/* Elegant background animation */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          animate={{
+            background: [
+              'linear-gradient(45deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%)',
+              'linear-gradient(225deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%)',
+              'linear-gradient(45deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%)',
+            ],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute inset-0 opacity-10"
+          animate={{
+            background: [
+              'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, transparent 100%)',
+          }}
+        />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 md:py-12 relative z-10">
         {/* Back button with animation */}
         <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
+          className="w-8 h-8"
         >
           <Link 
             href="/" 
-            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors duration-300 group"
+            className="inline-flex items-center justify-center w-full h-full text-blue-400 hover:text-blue-300 transition-colors duration-300 group"
           >
             <motion.span
               animate={{ x: [0, -5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="text-xl"
+              className="text-2xl"
             >
               ←
             </motion.span>
-            <span className="group-hover:underline">Back to Gallery</span>
           </Link>
         </motion.div>
         
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="mt-4 sm:mt-6 md:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 items-center">
           {/* Image container with parallax effect */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -203,7 +228,7 @@ export default function ImagePage() {
               stiffness: 100,
               damping: 10,
             }}
-            className="relative h-[70vh] rounded-2xl overflow-hidden shadow-2xl"
+            className="relative h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl"
             style={{
               transformStyle: "preserve-3d",
               perspective: "1000px",
@@ -216,6 +241,7 @@ export default function ImagePage() {
               className="object-cover"
               priority
               onLoad={() => setIsLoaded(true)}
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 90vw, (max-width: 1024px) 50vw, 50vw"
             />
             <motion.div
               initial={{ opacity: 0 }}
@@ -226,16 +252,16 @@ export default function ImagePage() {
 
           {/* Content section */}
           <motion.div
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="text-white px-2 sm:px-4 md:px-0"
           >
             <motion.h1 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-5xl font-bold mb-6 capitalize"
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 capitalize"
             >
               {image.alt}
             </motion.h1>
@@ -243,49 +269,13 @@ export default function ImagePage() {
             <motion.p 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="text-neutral-300 text-lg leading-relaxed"
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="text-neutral-300 text-base sm:text-lg leading-relaxed"
             >
               {image.description}
             </motion.p>
-
-            {/* Decorative elements */}
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 1, type: "spring" }}
-              className="mt-8 flex gap-4"
-            >
-              <div className="w-2 h-2 rounded-full bg-blue-400" />
-              <div className="w-2 h-2 rounded-full bg-blue-400" />
-              <div className="w-2 h-2 rounded-full bg-blue-400" />
-            </motion.div>
           </motion.div>
         </div>
-      </div>
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              opacity: 0,
-            }}
-            animate={{
-              y: [null, Math.random() * window.innerHeight],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: Math.random() * 5 + 5,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
       </div>
     </motion.main>
   );
