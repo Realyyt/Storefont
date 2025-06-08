@@ -29,7 +29,7 @@ export default function Home() {
       src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop",
       alt: "Forest",
       speed: 3.6,
-      position: "top-[65%] right-[5%] sm:right-[5%] md:right-[8%]",
+      position: "top-[38%] right-[5%] sm:right-[5%] md:right-[8%]",
       wave: 1,
       size: "medium",
     },
@@ -299,29 +299,35 @@ export default function Home() {
         {/* Header */}
         <Header />
         {/* Hero Section */}
-        <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 flex flex-col justify-start items-center text-white text-center pt-32">
+        <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 flex flex-col justify-center items-center text-white text-center">
           {/* Central Logo (large) */}
-          <div className="relative z-20 flex flex-col items-center justify-center mb-8">
+          <div className="relative z-20 flex flex-col items-center justify-center">
             <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-white via-neutral-200 to-white bg-clip-text text-transparent drop-shadow-lg select-none">NUTAH</span>
           </div>
-          {/* Welcome Message */}
+          {/* Welcome Message - Moved down with added margin-top */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="relative z-10 text-center "
+            className="relative z-10 text-center mt-8"
             style={{
               transform: `translate3d(0, ${scrollProgress * 300 * 1.5}px, 0)`,
               opacity: Math.max(0, 1 - scrollProgress * 1.2),
               filter: `blur(${Math.min(scrollProgress * 0.3, 1.5)}px)`,
             }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               Welcome to our Media Gallery
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-neutral-300">
+            <p className="text-sm sm:text-base md:text-lg text-neutral-300 mb-8">
               Explore our premium curated collection 
             </p>
+            <Link 
+              href="/shop" 
+              className="inline-block px-8 py-3 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors duration-300 shadow-lg hover:shadow-xl"
+            >
+              Shop Now
+            </Link>
           </motion.div>
         </section>
         {/* Parallax Scroll Section */}
@@ -341,10 +347,10 @@ export default function Home() {
                       href={`/image/${image.alt.toLowerCase()}`}
                       className={`absolute ${
                         image.size === 'small' 
-                          ? 'w-24 h-16 sm:w-32 sm:h-20 md:w-40 md:h-28' 
+                          ? 'w-32 h-24 sm:w-40 sm:h-32 md:w-48 md:h-36' 
                           : image.size === 'medium' 
-                            ? 'w-32 h-20 sm:w-40 sm:h-28 md:w-56 md:h-36' 
-                            : 'w-40 h-28 sm:w-56 sm:h-36 md:w-80 md:h-52'
+                            ? 'w-40 h-32 sm:w-56 sm:h-40 md:w-72 md:h-48' 
+                            : 'w-48 h-36 sm:w-72 sm:h-48 md:w-96 md:h-64'
                       } rounded-2xl overflow-hidden shadow-2xl transition-transform duration-75 ease-out ${image.position} hover:scale-105 hover:z-50`}
                       style={{
                         ...getImageTransform(image.speed, image.wave),
