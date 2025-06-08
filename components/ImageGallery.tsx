@@ -76,9 +76,9 @@ export function ImageGallery({
                 ref={imageRef}
                 className={cn(
                   "cursor-pointer transition-all duration-300 hover:scale-[1.02] relative group",
-                  size === 'large' ? "max-w-[120%] md:max-w-[110%] lg:max-w-[120%] mx-auto" :
-                  size === 'medium' ? "max-w-[100%] md:max-w-[95%] lg:max-w-[100%] mx-auto" :
-                  "max-w-[90%] md:max-w-[85%] lg:max-w-[90%] mx-auto"
+                  size === 'large' ? "max-w-[100%] md:max-w-[95%] lg:max-w-[120%] mx-auto" :
+                  size === 'medium' ? "max-w-[90%] md:max-w-[85%] lg:max-w-[100%] mx-auto" :
+                  "max-w-[80%] md:max-w-[75%] lg:max-w-[90%] mx-auto"
                 )}
                 onClick={() => onImageClick?.(idx)}
               >
@@ -99,9 +99,9 @@ export function ImageGallery({
                     delay={image.delay}
                     className={cn(
                       "w-full h-auto shadow-lg rounded-2xl bg-card transition-all duration-500",
-                      size === 'large' ? "aspect-[5/6] md:aspect-[5/6] lg:aspect-[5/6]" :
-                      size === 'medium' ? "aspect-[4/5] md:aspect-[4/5] lg:aspect-[4/5]" :
-                      "aspect-[3/4] md:aspect-[3/4] lg:aspect-[3/4]"
+                      size === 'large' ? "aspect-[4/5] md:aspect-[4/5] lg:aspect-[5/6]" :
+                      size === 'medium' ? "aspect-[3/4] md:aspect-[3/4] lg:aspect-[4/5]" :
+                      "aspect-[2/3] md:aspect-[2/3] lg:aspect-[3/4]"
                     )}
                     priority={idx === 0}
                   />

@@ -301,30 +301,30 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-950 flex flex-col justify-center items-center text-white text-center">
           {/* Central Logo (large) */}
-          <div className="relative z-20 flex flex-col items-center justify-center">
+          <div className="relative z-20 flex flex-col items-center justify-center mb-4 sm:mb-8">
             <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-white via-neutral-200 to-white bg-clip-text text-transparent drop-shadow-lg select-none">NUTAH</span>
           </div>
-          {/* Welcome Message - Moved down with added margin-top */}
+          {/* Welcome Message */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="relative z-10 text-center mt-8"
+            className="relative z-10 text-center max-w-3xl mx-auto px-4"
             style={{
               transform: `translate3d(0, ${scrollProgress * 300 * 1.5}px, 0)`,
               opacity: Math.max(0, 1 - scrollProgress * 1.2),
               filter: `blur(${Math.min(scrollProgress * 0.3, 1.5)}px)`,
             }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Welcome to our Media Gallery
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-neutral-300 mb-8">
+            <p className="text-sm sm:text-base md:text-lg text-neutral-300 mb-6 sm:mb-8">
               Explore our premium curated collection 
             </p>
             <Link 
               href="/shop" 
-              className="inline-block px-8 py-3 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors duration-300 shadow-lg hover:shadow-xl"
+              className="inline-block px-6 py-1.5 sm:px-10 sm:py-2.5 bg-white text-neutral-900 rounded-full font-semibold text-sm sm:text-lg transition-all duration-300 hover:bg-neutral-200 hover:scale-105 hover:shadow-lg"
             >
               Shop Now
             </Link>
@@ -347,10 +347,10 @@ export default function Home() {
                       href={`/image/${image.alt.toLowerCase()}`}
                       className={`absolute ${
                         image.size === 'small' 
-                          ? 'w-32 h-24 sm:w-40 sm:h-32 md:w-48 md:h-36' 
+                          ? 'w-24 h-16 sm:w-32 sm:h-20 md:w-48 md:h-36' 
                           : image.size === 'medium' 
-                            ? 'w-40 h-32 sm:w-56 sm:h-40 md:w-72 md:h-48' 
-                            : 'w-48 h-36 sm:w-72 sm:h-48 md:w-96 md:h-64'
+                            ? 'w-32 h-20 sm:w-40 sm:h-28 md:w-72 md:h-48' 
+                            : 'w-40 h-28 sm:w-56 sm:h-36 md:w-96 md:h-64'
                       } rounded-2xl overflow-hidden shadow-2xl transition-transform duration-75 ease-out ${image.position} hover:scale-105 hover:z-50`}
                       style={{
                         ...getImageTransform(image.speed, image.wave),
